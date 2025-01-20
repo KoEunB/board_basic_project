@@ -1,7 +1,9 @@
 package com.map_study.controller;
 
 import com.map_study.entity.Board;
+import com.map_study.entity.Comment;
 import com.map_study.service.BoardService;
+import com.map_study.service.CommentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,13 +16,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Controller
 public class BoardController {
 
     private final BoardService boardService;
+    private final CommentService commentService;
 
-    public BoardController(BoardService boardService) {
+    public BoardController(BoardService boardService, CommentService commentService) {
         this.boardService = boardService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/board/write")
@@ -69,6 +75,11 @@ public class BoardController {
     public String boardView(Model model, @RequestParam("boardId") Integer boardId) {
 
         model.addAttribute("board", boardService.boardView(boardId));
+
+        //댓글
+        List<Comment> commentList = commentService.findAll(boardId);
+        model.addAttribute("commentList", commentList);
+
         return "boardview";
     }
 
