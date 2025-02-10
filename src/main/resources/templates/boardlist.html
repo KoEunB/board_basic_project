@@ -23,6 +23,8 @@
           <tr>
             <th>글 번호</th>
             <th>제목</th>
+            <th>조회수</th>
+            <th>하트</th>
           </tr>
       </thead>
       <tbody>
@@ -31,6 +33,7 @@
           <td>
           <a th:text="${board.title}" th:href="@{/board/view(boardId=${board.id})}"></a>
           </td>
+          <td th:text="${board.viewCount}"></td>
       </tr>
       </tbody>
     </table>

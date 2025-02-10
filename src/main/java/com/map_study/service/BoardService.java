@@ -2,6 +2,7 @@ package com.map_study.service;
 
 import com.map_study.entity.Board;
 import com.map_study.repository.BoardRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.beans.Transient;
 import java.io.File;
 import java.util.UUID;
 
@@ -52,9 +54,15 @@ public class BoardService {
     }
 
     //특정 게시글 불러오기
+    @Transactional
     public Board boardView(Integer boardId) {
 
-        return boardRepository.findById(boardId).get();
+        Board board = boardRepository.findById(boardId).get();
+
+        //조회수
+        board.setViewCount(board.getViewCount() + 1);
+
+        return board;
     }
 
     //특정 게시글 삭제

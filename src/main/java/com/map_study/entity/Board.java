@@ -1,9 +1,6 @@
 package com.map_study.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -17,4 +14,7 @@ public class Board {
     private String content;
     private String filename;
     private String filepath;
+
+    @Column(name = "view_count", columnDefinition = "int default 0")
+    private int viewCount;
 }
