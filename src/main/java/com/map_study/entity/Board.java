@@ -17,4 +17,8 @@ public class Board {
 
     @Column(name = "view_count", columnDefinition = "int default 0")
     private int viewCount;
+
+    @Column(name = "heart_count", columnDefinition = "int default 0")
+    private int  heartCount;
+
 }

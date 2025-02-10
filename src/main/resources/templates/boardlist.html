@@ -34,6 +34,7 @@
           <a th:text="${board.title}" th:href="@{/board/view(boardId=${board.id})}"></a>
           </td>
           <td th:text="${board.viewCount}"></td>
+          <td th:text="${board.heartCount}"></td>
       </tr>
       </tbody>
     </table>
