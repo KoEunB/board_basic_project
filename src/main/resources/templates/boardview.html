@@ -102,15 +102,15 @@
 
         // 하트 클릭 이벤트
         $("#heart-button").click(function () {
+            let heartCount = parseInt($("#heart-count").text()) || 0; // 숫자로 변환, NaN 방지
+
             if ($("#heart-button").text() === "🤍") {
                 $.ajax({
                     type: "POST",
                     url: `/like/${memberId}/${articleId}`,
-                    success: function (response) {
-                        console.log(response);
+                    success: function () {
                         $("#heart-button").text("❤️");
-                        let newCount = parseInt($("#heart-button").text()) + 1;
-                        $("#heart-button").text(newCount);
+                        $("#heart-count").text(heartCount + 1); // 숫자 증가
                     },
                     error: function () {
                         console.log("좋아요 추가 실패");
@@ -120,11 +120,9 @@
                 $.ajax({
                     type: "DELETE",
                     url: `/like/${memberId}/${articleId}`,
-                    success: function (response) {
-                        console.log(response);
+                    success: function () {
                         $("#heart-button").text("🤍");
-                        let newCount = Math.max(0, parseInt($("#heart-button").text()) - 1);
-                        $("#heart-button").text(newCount);
+                        $("#heart-count").text(Math.max(0, heartCount - 1)); // 숫자 감소, 최소 0
                     },
                     error: function () {
                         console.log("좋아요 삭제 실패");
@@ -133,7 +131,7 @@
             }
         });
     });
-
 </script>
+
 
 </html>
