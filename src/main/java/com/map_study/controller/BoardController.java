@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/board")
@@ -29,13 +31,13 @@ public class BoardController {
     }
 
     @GetMapping("/write")
-    public String boardWriteForm(){
+    public String boardWriteForm() {
 
         return "boardwrite";
     }
 
     @PostMapping("/writepro")
-    public String boardWritePro(Board board, Model model, @RequestParam(name="file", required = false) MultipartFile file) throws Exception {
+    public String boardWritePro(Board board, Model model, @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
 
         boardService.boardWrite(board, file);
 
@@ -52,7 +54,7 @@ public class BoardController {
 
         Page<Board> list = null;
 
-        if(searchKeyword == null) {
+        if (searchKeyword == null) {
             list = boardService.boardList(pageable);
         } else {
             list = boardService.boardSearchList(searchKeyword, pageable);
@@ -101,12 +103,20 @@ public class BoardController {
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
                               Board board,
                               Model model,
-                              @RequestParam(name="file", required = false) MultipartFile file) throws Exception {
+                              @RequestParam(name = "file", required = false) MultipartFile file,
+                              @RequestParam(name = "deleteImage", required = false) String deleteImage) throws Exception {
 
         Board boardTemp = boardService.boardView(boardId);
         boardTemp.setTitle(board.getTitle());
         boardTemp.setContent(board.getContent());
 
+        // 이미지 삭제 체크되었을 경우 기존 이미지 제거
+        if (deleteImage != null) {
+            boardTemp.setFilename(null);
+            boardTemp.setFilepath(null);
+        }
+
+        // 새로운 파일 업로드
         boardService.boardWrite(boardTemp, file);
 
         model.addAttribute("message", "글 수정이 완료되었습니다.");
@@ -114,4 +124,6 @@ public class BoardController {
 
         return "message";
     }
+
+
 }

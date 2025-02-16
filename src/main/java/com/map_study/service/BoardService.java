@@ -72,4 +72,10 @@ public class BoardService {
         boardRepository.deleteById(boardId);
     }
 
+    // 게시글 수정
+    public void updateBoard(Board board) {
+        boardRepository.save(board); // 기존 데이터 수정
+    }
+
+
 }
