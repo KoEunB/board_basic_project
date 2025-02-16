@@ -20,7 +20,6 @@
 <a th:href="@{/board/modify/{boardId}(boardId=${board.id})}">글 수정</a>
 <p></p>
 <div>
-    <input type="text" id="commentWriter" placeholder="작성자">
     <input type="text" id="commentContents" placeholder="내용">
     <button id="comment-write-btn" onclick="commentWrite()">댓글작성</button>
 </div>
@@ -40,7 +39,7 @@
                 <td th:text="${comment.id}"></td>
                 <td th:text="${comment.commentWriter}"></td>
                 <td th:text="${comment.commentContents}"></td>
-                <td th:text="${comment.commentCreatedTime}"></td>
+                <td th:text="${#dates.format(comment.commentCreatedTime, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
         </tbody>
     </table>
@@ -48,7 +47,7 @@
 </body>
 <script th:inline="javascript">
     const commentWrite = () => {
-        const writer = document.getElementById('commentWriter').value;
+        const memberId = 1;  // 임시 회원 ID (로그인 시스템 구현 전까지 사용)
         const contents = document.getElementById('commentContents').value;
         const post = '[[${board.id}]]';
 
@@ -57,7 +56,7 @@
             url: "/comment/save",
             contentType: "application/json",
             data: JSON.stringify({
-                commentWriter: writer,
+                commentWriter: memberId, // 작성자를 임의의 회원번호로 설정
                 commentContents: contents,
                 postId: post
             }),
@@ -80,7 +79,6 @@
                 }
                 output += "</table>";
                 document.getElementById('comment-list').innerHTML = output;
-                document.getElementById('commentWriter').value='';
                 document.getElementById('commentContents').value='';
             },
             error: function () {
