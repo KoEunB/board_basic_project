@@ -15,7 +15,12 @@
 <p th:text="|조회수 : ${board.viewCount}|">조회수</p>
 <p th:text="|작성 날짜: ${#dates.format(board.boardCreatedTime, 'yyyy-MM-dd')}|"></p>
 <p th:text="${board.content}">내용이 들어갈 부분입니다</p>
-<a th:href="@{${board.filepath}}">다운받기</a>
+
+<!-- 이미지 파일이면 화면에 표시 -->
+<div th:if="${board.filename}">
+    <img th:src="${board.filepath}" alt="게시글 이미지" style="max-width: 100%; height: auto;">
+</div>
+
 <a th:href="@{/board/delete(boardId=${board.id})}">글 삭제</a>
 <a th:href="@{/board/modify/{boardId}(boardId=${board.id})}">글 수정</a>
 <p></p>
