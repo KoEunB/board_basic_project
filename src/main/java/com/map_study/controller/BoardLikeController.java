@@ -1,16 +1,16 @@
 package com.map_study.controller;
 
-import com.map_study.service.HeartService;
+import com.map_study.service.BoardLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/like")
+@RequestMapping("/board/like")
 @RequiredArgsConstructor
-public class HeartController {
+public class BoardLikeController {
 
-    private final HeartService heartService;
+    private final BoardLikeService boardLikeService;
 
     // 좋아요 추가
     @PostMapping("/{memberId}/{articleId}")
@@ -18,7 +18,7 @@ public class HeartController {
             @PathVariable("memberId") Integer memberId,
             @PathVariable("articleId") Integer articleId) {
 
-        heartService.addLike(memberId, articleId);
+        boardLikeService.addLike(memberId, articleId);
         return ResponseEntity.ok("좋아요 추가됨");
     }
 
@@ -28,7 +28,7 @@ public class HeartController {
             @PathVariable("memberId") Integer memberId,
             @PathVariable("articleId") Integer articleId) {
 
-        heartService.removeLike(memberId, articleId);
+        boardLikeService.removeLike(memberId, articleId);
         return ResponseEntity.ok("좋아요 삭제됨");
     }
 
@@ -38,7 +38,7 @@ public class HeartController {
             @PathVariable("memberId") Integer memberId,
             @PathVariable("articleId") Integer articleId) {
 
-        return ResponseEntity.ok(heartService.isLiked(memberId, articleId));
+        return ResponseEntity.ok(boardLikeService.isLiked(memberId, articleId));
     }
 }
 

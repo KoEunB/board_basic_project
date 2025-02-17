@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Heart {
+public class BoardLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
