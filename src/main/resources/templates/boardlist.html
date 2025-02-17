@@ -18,6 +18,7 @@
           <input type="text" name="searchKeyword"/>
           <button type="submit">검색</button>
       </form>
+      <button onclick="writeBoard()">작성하기</button>
     <table>
       <thead>
           <tr>
@@ -36,6 +37,9 @@
           <td th:text="${board.viewCount}"></td>
           <td th:text="${board.heartCount}"></td>
       </tr>
+      <tr th:if="${list.isEmpty()}">
+          <td colspan="4">게시글이 없습니다.</td>
+      </tr>
       </tbody>
     </table>
 
@@ -45,4 +49,9 @@
       </th:block>
   </div>
 </body>
+<script>
+    const writeBoard = () => {
+        location.href = "/board/write";
+    }
+</script>
 </html>
