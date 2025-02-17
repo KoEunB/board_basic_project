@@ -9,8 +9,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // "/files/**" URL 요청을 실제 저장된 "upload" 폴더로 매핑
+        // 자유게시판 파일 접근
         registry.addResourceHandler("/files/**")
                 .addResourceLocations("file:" + System.getProperty("user.dir") + "/upload/");
+
+        // 비밀게시판 파일 접근
+        registry.addResourceHandler("/secretfiles/**")
+                .addResourceLocations("file:" + System.getProperty("user.dir") + "/secretupload/");
     }
 }
