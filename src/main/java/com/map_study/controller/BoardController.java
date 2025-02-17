@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/board")
 public class BoardController {
 
     private final BoardService boardService;
@@ -30,13 +29,19 @@ public class BoardController {
         this.commentService = commentService;
     }
 
-    @GetMapping("/write")
+    @GetMapping("/")
+    public String boardMain() {
+
+        return "boardmain";
+    }
+
+    @GetMapping("/board/write")
     public String boardWriteForm() {
 
         return "boardwrite";
     }
 
-    @PostMapping("/writepro")
+    @PostMapping("/board/writepro")
     public String boardWritePro(Board board, Model model, @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
 
         boardService.boardWrite(board, file);
@@ -47,7 +52,7 @@ public class BoardController {
         return "message";
     }
 
-    @GetMapping("/list")
+    @GetMapping("/board/list")
     public String boardList(Model model,
                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                             @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword) {
@@ -72,7 +77,7 @@ public class BoardController {
         return "boardlist";
     }
 
-    @GetMapping("/view")
+    @GetMapping("/board/view")
     public String boardView(Model model, @RequestParam("boardId") Integer boardId) {
 
         model.addAttribute("board", boardService.boardView(boardId));
@@ -84,14 +89,14 @@ public class BoardController {
         return "boardview";
     }
 
-    @GetMapping("/delete")
+    @GetMapping("/board/delete")
     public String boardDelete(Model model, @RequestParam("boardId") Integer boardId) {
 
         boardService.boardDelete(boardId);
         return "redirect:/board/list";
     }
 
-    @GetMapping("/modify/{boardId}")
+    @GetMapping("/board/modify/{boardId}")
     public String boardModify(Model model, @PathVariable("boardId") Integer boardId) {
 
         model.addAttribute("board", boardService.boardView(boardId));
@@ -99,7 +104,7 @@ public class BoardController {
         return "boardmodify";
     }
 
-    @PostMapping("/update/{boardId}")
+    @PostMapping("/board/update/{boardId}")
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
                               Board board,
                               Model model,
