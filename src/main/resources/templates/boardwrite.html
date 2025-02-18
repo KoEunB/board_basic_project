@@ -10,7 +10,7 @@
         margin: 0 auto;
     }
 
-    .layout input, .layout textarea {
+    .layout input, .layout textarea, .layout select {
         width: 100%;
         box-sizing: border-box;
     }
@@ -19,12 +19,26 @@
         margin-top: 10px;
         min-height: 300px;
     }
+
+    .layout select {
+        margin-top: 10px;
+        padding: 5px;
+    }
 </style>
 <body>
 <div class="layout">
     <form action="/board/writepro" method="post" enctype="multipart/form-data">
-        <input name="title" type="text" placeholder="제목을 입력하세요" >
-        <textarea name="content" placeholder="내용을 입력하세요" ></textarea>
+        <input name="title" type="text" placeholder="제목을 입력하세요">
+
+        <!-- 카테고리 선택 추가 -->
+        <select name="category">
+            <option value="ALL">전체</option>
+            <option value="NOTICE">공지</option>
+            <option value="QUESTION">질문</option>
+            <option value="CHAT">잡담</option>
+        </select>
+
+        <textarea name="content" placeholder="내용을 입력하세요"></textarea>
         <input type="file" name="file">
         <button type="submit">작성</button>
     </form>

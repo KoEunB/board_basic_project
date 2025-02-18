@@ -2,53 +2,67 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>게시글 리스트 페이지</title>
+    <title>자유게시판 리스트 페이지</title>
 </head>
 <style>
-
-    .layout{
-      width: 500px;
-      margin: 0 auto;
+    .layout {
+        width: 500px;
+        margin: 0 auto;
     }
-
 </style>
 <body>
-  <div class="layout">
-      <form th:action="@{/board/list}" method="get">
-          <input type="text" name="searchKeyword"/>
-          <button type="submit">검색</button>
-      </form>
-      <button onclick="writeBoard()">작성하기</button>
+<div class="layout">
+    <!-- 검색 폼 -->
+    <form th:action="@{/board/list}" method="get">
+        <input type="text" name="searchKeyword" placeholder="검색어 입력"/>
+
+        <!-- ✅ 카테고리 선택 추가 -->
+        <select name="category">
+            <option value="ALL" th:selected="${param.category == 'ALL'}">전체</option>
+            <option value="NOTICE" th:selected="${param.category == 'NOTICE'}">공지</option>
+            <option value="QUESTION" th:selected="${param.category == 'QUESTION'}">질문</option>
+            <option value="CHAT" th:selected="${param.category == 'CHAT'}">잡담</option>
+        </select>
+
+        <button type="submit">검색</button>
+    </form>
+
+    <button onclick="writeBoard()">작성하기</button>
+
     <table>
-      <thead>
-          <tr>
+        <thead>
+        <tr>
             <th>글 번호</th>
             <th>제목</th>
             <th>조회수</th>
             <th>하트</th>
-          </tr>
-      </thead>
-      <tbody>
-      <tr th:each="board : ${list}">
-          <td th:text="${board.id}"></td>
-          <td>
-          <a th:text="${board.title}" th:href="@{/board/view(boardId=${board.id})}"></a>
-          </td>
-          <td th:text="${board.viewCount}"></td>
-          <td th:text="${board.heartCount}"></td>
-      </tr>
-      <tr th:if="${list.isEmpty()}">
-          <td colspan="4">게시글이 없습니다.</td>
-      </tr>
-      </tbody>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${list}">
+            <td th:text="${board.id}"></td>
+            <td>
+                <a th:text="${board.title}" th:href="@{/board/view(boardId=${board.id})}"></a>
+            </td>
+            <td th:text="${board.viewCount}"></td>
+            <td th:text="${board.heartCount}"></td>
+        </tr>
+        <tr th:if="${list.isEmpty()}">
+            <td colspan="4">게시글이 없습니다.</td>
+        </tr>
+        </tbody>
     </table>
 
-      <th:block th:each="page : ${#numbers.sequence(startPage,endPage)}">
-          <a th:if="${page != nowPage}" th:href="@{/board/list(page=${page - 1}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
-          <strong th:if="${page == nowPage}" th:text="${page}" style="color: red"></strong>
-      </th:block>
-  </div>
+    <!-- 페이지네이션 -->
+    <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+        <a th:if="${page != nowPage}"
+           th:href="@{/board/list(page=${page - 1}, searchKeyword=${param.searchKeyword}, category=${param.category})}"
+           th:text="${page}"></a>
+        <strong th:if="${page == nowPage}" th:text="${page}" style="color: red"></strong>
+    </th:block>
+</div>
 </body>
+
 <script>
     const writeBoard = () => {
         location.href = "/board/write";

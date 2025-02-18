@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.map_study.entity.BoardCategory; // 패키지 경로에 맞게 수정
+
 
 import java.io.File;
 import java.util.UUID;
@@ -43,16 +45,24 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    //게시글 리스트 처리
-    public Page<Board> boardList(Pageable pageable) {
-
-        return boardRepository.findAll(pageable);
+    // 카테고리별 게시글 리스트 처리
+    public Page<Board> boardList(Pageable pageable, BoardCategory category) {
+        if (category == null || category == BoardCategory.ALL) {
+            return boardRepository.findAll(pageable);
+        } else {
+            return boardRepository.findByCategory(category, pageable);
+        }
     }
 
     public Page<Board> boardSearchList(String searchKeyword, Pageable pageable) {
 
         return boardRepository.findByTitleContaining(searchKeyword, pageable);
     }
+
+    public Page<Board> boardSearchListByCategory(String searchKeyword, BoardCategory category, Pageable pageable) {
+        return boardRepository.findByTitleContainingAndCategory(searchKeyword, category, pageable);
+    }
+
 
     //특정 게시글 불러오기
     @Transactional

@@ -1,6 +1,7 @@
 package com.map_study.controller;
 
 import com.map_study.entity.Board;
+import com.map_study.entity.BoardCategory;
 import com.map_study.entity.Comment;
 import com.map_study.service.BoardService;
 import com.map_study.service.CommentService;
@@ -42,27 +43,40 @@ public class BoardController {
     }
 
     @PostMapping("/board/writepro")
-    public String boardWritePro(Board board, Model model, @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
+    public String boardWritePro(@ModelAttribute Board board,
+                                @RequestParam(name = "file", required = false) MultipartFile file,
+                                Model model) throws Exception {
 
         boardService.boardWrite(board, file);
 
         model.addAttribute("message", "글 작성이 완료되었습니다.");
-        model.addAttribute("searchUrl", "/board/list");
+        model.addAttribute("searchUrl", "/board/list?category=" + board.getCategory());
 
         return "message";
     }
 
+
+    // 카테고리별 게시글 조회
     @GetMapping("/board/list")
     public String boardList(Model model,
                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                            @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword) {
+                            @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
+                            @RequestParam(name = "category", required = false) BoardCategory category) {
 
-        Page<Board> list = null;
+        Page<Board> list;
 
-        if (searchKeyword == null) {
-            list = boardService.boardList(pageable);
-        } else {
+        if (!searchKeyword.isEmpty() && category != null) {
+            // 카테고리와 키워드가 모두 있는 경우
+            list = boardService.boardSearchListByCategory(searchKeyword, category, pageable);
+        } else if (!searchKeyword.isEmpty()) {
+            // 검색 키워드만 있는 경우
             list = boardService.boardSearchList(searchKeyword, pageable);
+        } else if (category != null) {
+            // 카테고리만 있는 경우
+            list = boardService.boardList(pageable, category);
+        } else {
+            // 아무 필터도 없는 경우 전체 조회
+            list = boardService.boardList(pageable, null);
         }
 
         int nowPage = list.getPageable().getPageNumber() + 1;
@@ -73,9 +87,13 @@ public class BoardController {
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("selectedCategory", category); // 선택된 카테고리 유지
+        model.addAttribute("searchKeyword", searchKeyword); // 검색 키워드 유지
 
         return "boardlist";
     }
+
+
 
     @GetMapping("/board/view")
     public String boardView(Model model, @RequestParam("boardId") Integer boardId) {
@@ -129,6 +147,4 @@ public class BoardController {
 
         return "message";
     }
-
-
 }

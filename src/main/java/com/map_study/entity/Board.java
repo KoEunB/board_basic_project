@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
+
 import java.sql.Timestamp;
 
 @Entity
@@ -27,4 +28,8 @@ public class Board {
     @Column(name = "heart_count", columnDefinition = "int default 0")
     private int  heartCount;
 
+    // 카테고리 추가
+    @Enumerated(EnumType.STRING) // Enum 값을 String으로 저장
+    @Column(nullable = false)
+    private BoardCategory category = BoardCategory.ALL; // 기본값 설정
 }
