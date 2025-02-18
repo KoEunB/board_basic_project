@@ -1,6 +1,9 @@
 package com.map_study.service;
 
+import com.map_study.entity.Board;
+import com.map_study.entity.BoardCategory;
 import com.map_study.entity.SecretBoard;
+import com.map_study.entity.SecretBoardCategory;
 import com.map_study.repository.SecretBoardRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +44,22 @@ public class SecretBoardService {
         secretBoardRepository.save(secretBoard);
     }
 
-    //게시글 리스트 처리
-    public Page<SecretBoard> secretboardList(Pageable pageable) {
-
-        return secretBoardRepository.findAll(pageable);
+    //카테고리별 게시글 리스트 처리
+    public Page<SecretBoard> secretboardList(Pageable pageable, SecretBoardCategory category) {
+        if (category == null) { //카테고리가 없으면 기본값을 족보로 설정
+            category = SecretBoardCategory.PAST_EXAMS;
+        }
+        return secretBoardRepository.findBycategory(category, pageable);
     }
+
 
     public Page<SecretBoard> secretboardSearchList(String searchKeyword, Pageable pageable) {
 
         return secretBoardRepository.findByTitleContaining(searchKeyword, pageable);
+    }
+
+    public Page<SecretBoard> secretboardSearchListByCategory(String searchKeyword, SecretBoardCategory category, Pageable pageable) {
+        return secretBoardRepository.findByTitleContainingAndCategory(searchKeyword, category, pageable);
     }
 
     //특정 게시글 불러오기

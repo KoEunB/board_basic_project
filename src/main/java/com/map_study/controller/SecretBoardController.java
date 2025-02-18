@@ -1,6 +1,5 @@
 package com.map_study.controller;
-import com.map_study.entity.SecretBoard;
-import com.map_study.entity.SecretComment;
+import com.map_study.entity.*;
 import com.map_study.service.SecretBoardService;
 import com.map_study.service.SecretCommentService;
 import org.springframework.data.domain.Page;
@@ -51,37 +50,53 @@ public class SecretBoardController {
     }
 
     @PostMapping("/writepro")
-    public String secretboardWritePro(SecretBoard secretBoard, Model model, @RequestParam(name = "file", required = false) MultipartFile file) throws Exception {
+    public String secretboardWritePro(@ModelAttribute SecretBoard secretBoard,
+                                      @RequestParam("category") SecretBoardCategory category,
+                                      @RequestParam(name = "file", required = false) MultipartFile file,
+                                      Model model) throws Exception {
 
+        secretBoard.setCategory(category); //카테고리 설정
         secretBoardService.secretboardWrite(secretBoard, file);
 
         model.addAttribute("message", "글 작성이 완료되었습니다.");
-        model.addAttribute("searchUrl", "/secret-board/list");
+        model.addAttribute("searchUrl", "/secret-board/list?category=" + category);
 
         return "message";
     }
 
+    // 카테고리별 게시글 조회
     @GetMapping("/list")
     public String secretboardList(Model model,
                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                            @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword) {
+                            @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
+                            @RequestParam(name = "category", required = false) SecretBoardCategory category) {
 
-        Page<SecretBoard> secretlist = null;
+        Page<SecretBoard> list;
 
-        if (searchKeyword == null) {
-            secretlist = secretBoardService.secretboardList(pageable);
+        if (!searchKeyword.isEmpty() && category != null) {
+            // 카테고리와 키워드가 모두 있는 경우
+            list = secretBoardService.secretboardSearchListByCategory(searchKeyword, category, pageable);
+        } else if (!searchKeyword.isEmpty()) {
+            // 검색 키워드만 있는 경우
+            list = secretBoardService.secretboardSearchList(searchKeyword, pageable);
+        } else if (category != null) {
+            // 카테고리만 있는 경우
+            list = secretBoardService.secretboardList(pageable, category);
         } else {
-            secretlist = secretBoardService.secretboardSearchList(searchKeyword, pageable);
+            // 아무 필터도 없는 경우 전체 조회
+            list = secretBoardService.secretboardList(pageable, null);
         }
 
-        int nowPage = secretlist.getPageable().getPageNumber() + 1;
+        int nowPage = list.getPageable().getPageNumber() + 1;
         int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 5, secretlist.getTotalPages());
+        int endPage = Math.min(nowPage + 5, list.getTotalPages());
 
-        model.addAttribute("list", secretlist);
+        model.addAttribute("list", list);
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("selectedCategory", category); // 선택된 카테고리 유지
+        model.addAttribute("searchKeyword", searchKeyword); // 검색 키워드 유지
 
         return "secretboardlist";
     }
