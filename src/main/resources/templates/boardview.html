@@ -54,7 +54,7 @@
     const commentWrite = () => {
         const memberId = 1;  // 임시 회원 ID (로그인 시스템 구현 전까지 사용)
         const contents = document.getElementById('commentContents').value;
-        const post = '[[${board.id}]]';
+        const boardId = '[[${board.id}]]';
 
         $.ajax({
             type: "POST",
@@ -63,7 +63,7 @@
             data: JSON.stringify({
                 commentWriter: memberId, // 작성자를 임의의 회원번호로 설정
                 commentContents: contents,
-                postId: post
+                boardId: boardId
             }),
             dataType: "json",
             success: function (commentList) {
@@ -96,10 +96,10 @@
 <script th:inline="javascript">
     $(document).ready(function () {
         const memberId = 1;  // 임시 회원 ID (실제 로그인 정보 연동 필요)
-        const articleId = '[[${board.id}]]';
+        const boardId = '[[${board.id}]]';
 
         // 좋아요 여부 확인 후 하트 색 변경
-        $.get(`/free-board/like/${memberId}/${articleId}`, function (isLiked) {
+        $.get(`/free-board/like/${memberId}/${boardId}`, function (isLiked) {
             if (isLiked) {
                 $("#heart-button").text("❤️");
             }
@@ -112,7 +112,7 @@
             if ($("#heart-button").text() === "🤍") {
                 $.ajax({
                     type: "POST",
-                    url: `/free-board/like/${memberId}/${articleId}`,
+                    url: `/free-board/like/${memberId}/${boardId}`,
                     success: function () {
                         $("#heart-button").text("❤️");
                         $("#heart-count").text(heartCount + 1); // 숫자 증가
@@ -124,7 +124,7 @@
             } else {
                 $.ajax({
                     type: "DELETE",
-                    url: `/free-board/like/${memberId}/${articleId}`,
+                    url: `/free-board/like/${memberId}/${boardId}`,
                     success: function () {
                         $("#heart-button").text("🤍");
                         $("#heart-count").text(Math.max(0, heartCount - 1)); // 숫자 감소, 최소 0

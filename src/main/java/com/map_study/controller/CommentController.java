@@ -22,7 +22,7 @@ public class CommentController {
         commentService.save(comment);
 
         //해당 게시글에 작성된 댓글 리스트를 가져옴
-        List<Comment> commentsList = commentService.findAll(comment.getPostId());
+        List<Comment> commentsList = commentService.findAll(comment.getBoardId());
         return commentsList;
     }
 }

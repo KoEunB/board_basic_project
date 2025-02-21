@@ -22,8 +22,8 @@ public class SecretCommentService {
     }
 
     //특정 게시글 댓글 조회
-    public List<SecretComment> findAll(Integer postId) {
+    public List<SecretComment> findAll(Integer boardId) {
 
-        return secretCommentRepository.findByPostId(postId);
+        return secretCommentRepository.findByBoardId(boardId);
     }
 }

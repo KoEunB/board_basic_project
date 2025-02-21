@@ -19,15 +19,15 @@ public class BoardLikeService {
 
     //좋아요 추가
     @Transactional
-    public void addLike(Integer memberId, Integer articleId) {
-        if (!boardLikeRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
+    public void addLike(Integer memberId, Integer boardId) {
+        if (!boardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
             BoardLike like = new BoardLike();
             like.setMemberId(memberId);
-            like.setArticleId(articleId);
+            like.setBoardId(boardId);
             boardLikeRepository.save(like);
 
             // 게시글의 likeCount 증가
-            Optional<Board> board = boardRepository.findById(articleId);
+            Optional<Board> board = boardRepository.findById(boardId);
             board.ifPresent(b -> {
                 b.setHeartCount(b.getHeartCount() + 1);
                 boardRepository.save(b);
@@ -37,12 +37,12 @@ public class BoardLikeService {
 
     //좋아요 삭제
     @Transactional
-    public void removeLike(Integer memberId, Integer articleId) {
-        boardLikeRepository.findByMemberIdAndArticleId(memberId, articleId).ifPresent(like -> {
+    public void removeLike(Integer memberId, Integer boardId) {
+        boardLikeRepository.findByMemberIdAndBoardId(memberId, boardId).ifPresent(like -> {
             boardLikeRepository.delete(like);
 
             // 게시글의 likeCount 감소
-            Optional<Board> board = boardRepository.findById(articleId);
+            Optional<Board> board = boardRepository.findById(boardId);
             board.ifPresent(b -> {
                 b.setHeartCount(Math.max(0, b.getHeartCount() - 1)); // 최소 0 유지
                 boardRepository.save(b);
@@ -51,8 +51,8 @@ public class BoardLikeService {
     }
 
     //좋아요 여부 확인
-    public boolean isLiked(Integer memberId, Integer articleId) {
-        return boardLikeRepository.existsByMemberIdAndArticleId(memberId, articleId);
+    public boolean isLiked(Integer memberId, Integer boardId) {
+        return boardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId);
     }
 }
 

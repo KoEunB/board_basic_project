@@ -21,7 +21,7 @@ public class CommentService {
     }
 
     //특정 게시글 댓글 조회
-    public List<Comment> findAll(Integer postId) {
-        return commentRepository.findByPostId(postId);
+    public List<Comment> findAll(Integer boardId) {
+        return commentRepository.findByBoardId(boardId);
     }
 }

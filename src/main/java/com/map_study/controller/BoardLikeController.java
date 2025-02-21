@@ -13,32 +13,32 @@ public class BoardLikeController {
     private final BoardLikeService boardLikeService;
 
     // 좋아요 추가
-    @PostMapping("/{memberId}/{articleId}")
+    @PostMapping("/{memberId}/{boardId}")
     public ResponseEntity<String> addLike(
             @PathVariable("memberId") Integer memberId,
-            @PathVariable("articleId") Integer articleId) {
+            @PathVariable("boardId") Integer boardId) {
 
-        boardLikeService.addLike(memberId, articleId);
+        boardLikeService.addLike(memberId, boardId);
         return ResponseEntity.ok("좋아요 추가됨");
     }
 
     //좋아요 삭제
-    @DeleteMapping("/{memberId}/{articleId}")
+    @DeleteMapping("/{memberId}/{boardId}")
     public ResponseEntity<String> removeLike(
             @PathVariable("memberId") Integer memberId,
-            @PathVariable("articleId") Integer articleId) {
+            @PathVariable("boardId") Integer boardId) {
 
-        boardLikeService.removeLike(memberId, articleId);
+        boardLikeService.removeLike(memberId, boardId);
         return ResponseEntity.ok("좋아요 삭제됨");
     }
 
     //좋아요 여부 확인
-    @GetMapping("/{memberId}/{articleId}")
+    @GetMapping("/{memberId}/{boardId}")
     public ResponseEntity<Boolean> checkLike(
             @PathVariable("memberId") Integer memberId,
-            @PathVariable("articleId") Integer articleId) {
+            @PathVariable("boardId") Integer boardId) {
 
-        return ResponseEntity.ok(boardLikeService.isLiked(memberId, articleId));
+        return ResponseEntity.ok(boardLikeService.isLiked(memberId, boardId));
     }
 }
 

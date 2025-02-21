@@ -18,7 +18,7 @@ public class SecretComment {
     private Integer id; //댓글id
     private String commentWriter;
     private String commentContents;
-    private Integer postId; //게시글id
+    private Integer boardId; //게시글id
 
     @CreationTimestamp
     private Timestamp commentCreatedTime; //댓글 작성 시간

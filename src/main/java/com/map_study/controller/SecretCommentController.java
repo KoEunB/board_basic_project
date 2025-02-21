@@ -22,7 +22,7 @@ public class SecretCommentController {
         secretCommentService.save(secretcomment);
 
         //해당 게시글에 작성된 댓글 리스트를 가져옴
-        List<SecretComment> secretCommentList = secretCommentService.findAll(secretcomment.getPostId());
+        List<SecretComment> secretCommentList = secretCommentService.findAll(secretcomment.getBoardId());
         return secretCommentList;
     }
 }

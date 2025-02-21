@@ -19,15 +19,15 @@ public class SecretBoardLikeService {
 
     //좋아요 추가
     @Transactional
-    public void addLike(Integer memberId, Integer articleId) {
-        if (!secretBoardLikeRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
+    public void addLike(Integer memberId, Integer boardId) {
+        if (!secretBoardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
             SecretBoardLike like = new SecretBoardLike();
             like.setMemberId(memberId);
-            like.setArticleId(articleId);
+            like.setBoardId(boardId);
             secretBoardLikeRepository.save(like);
 
             // 게시글의 likeCount 증가
-            Optional<SecretBoard> board = secretBoardRepository.findById(articleId);
+            Optional<SecretBoard> board = secretBoardRepository.findById(boardId);
             board.ifPresent(b -> {
                 b.setHeartCount(b.getHeartCount() + 1);
                 secretBoardRepository.save(b);
@@ -37,12 +37,12 @@ public class SecretBoardLikeService {
 
     //좋아요 삭제
     @Transactional
-    public void removeLike(Integer memberId, Integer articleId) {
-        secretBoardLikeRepository.findByMemberIdAndArticleId(memberId, articleId).ifPresent(like -> {
+    public void removeLike(Integer memberId, Integer boardId) {
+        secretBoardLikeRepository.findByMemberIdAndBoardId(memberId, boardId).ifPresent(like -> {
             secretBoardLikeRepository.delete(like);
 
             // 게시글의 likeCount 감소
-            Optional<SecretBoard> board = secretBoardRepository.findById(articleId);
+            Optional<SecretBoard> board = secretBoardRepository.findById(boardId);
             board.ifPresent(b -> {
                 b.setHeartCount(Math.max(0, b.getHeartCount() - 1)); // 최소 0 유지
                 secretBoardRepository.save(b);
@@ -51,8 +51,8 @@ public class SecretBoardLikeService {
     }
 
     //좋아요 여부 확인
-    public boolean isLiked(Integer memberId, Integer articleId) {
-        return secretBoardLikeRepository.existsByMemberIdAndArticleId(memberId, articleId);
+    public boolean isLiked(Integer memberId, Integer boardId) {
+        return secretBoardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId);
     }
 }
 

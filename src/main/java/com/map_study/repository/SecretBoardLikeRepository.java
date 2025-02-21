@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface SecretBoardLikeRepository extends JpaRepository<SecretBoardLike, Integer> {
 
-    boolean existsByMemberIdAndArticleId(Integer memberId, Integer articleId);
-    Optional<SecretBoardLike> findByMemberIdAndArticleId(Integer memberId, Integer articleId);
+    boolean existsByMemberIdAndBoardId(Integer memberId, Integer boardId);
+    Optional<SecretBoardLike> findByMemberIdAndBoardId(Integer memberId, Integer boardId);
 }
 
