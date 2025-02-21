@@ -149,7 +149,7 @@ public class SecretBoardController {
         secretBoardService.secretboardWrite(boardTemp, file);
 
         model.addAttribute("message", "글 수정이 완료되었습니다.");
-        model.addAttribute("searchUrl", "/secret-board/list");
+        model.addAttribute("searchUrl", "/secret-board/list?category=" + boardTemp.getCategory());
 
         return "message";
     }

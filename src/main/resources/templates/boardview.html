@@ -21,8 +21,8 @@
     <img th:src="${board.filepath}" alt="게시글 이미지" style="max-width: 100%; height: auto;">
 </div>
 
-<a th:href="@{/board/delete(boardId=${board.id})}">글 삭제</a>
-<a th:href="@{/board/modify/{boardId}(boardId=${board.id})}">글 수정</a>
+<a th:href="@{/free-board/delete(boardId=${board.id})}">글 삭제</a>
+<a th:href="@{/free-board/modify/{boardId}(boardId=${board.id})}">글 수정</a>
 <p></p>
 <div>
     <input type="text" id="commentContents" placeholder="내용">
@@ -58,7 +58,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/comment/save",
+            url: "/free-comment/save",
             contentType: "application/json",
             data: JSON.stringify({
                 commentWriter: memberId, // 작성자를 임의의 회원번호로 설정
@@ -99,7 +99,7 @@
         const articleId = '[[${board.id}]]';
 
         // 좋아요 여부 확인 후 하트 색 변경
-        $.get(`/board/like/${memberId}/${articleId}`, function (isLiked) {
+        $.get(`/free-board/like/${memberId}/${articleId}`, function (isLiked) {
             if (isLiked) {
                 $("#heart-button").text("❤️");
             }
@@ -112,7 +112,7 @@
             if ($("#heart-button").text() === "🤍") {
                 $.ajax({
                     type: "POST",
-                    url: `/board/like/${memberId}/${articleId}`,
+                    url: `/free-board/like/${memberId}/${articleId}`,
                     success: function () {
                         $("#heart-button").text("❤️");
                         $("#heart-count").text(heartCount + 1); // 숫자 증가
@@ -124,7 +124,7 @@
             } else {
                 $.ajax({
                     type: "DELETE",
-                    url: `/board/like/${memberId}/${articleId}`,
+                    url: `/free-board/like/${memberId}/${articleId}`,
                     success: function () {
                         $("#heart-button").text("🤍");
                         $("#heart-count").text(Math.max(0, heartCount - 1)); // 숫자 감소, 최소 0

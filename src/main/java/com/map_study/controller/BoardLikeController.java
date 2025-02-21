@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/board/like")
+@RequestMapping("/free-board/like")
 @RequiredArgsConstructor
 public class BoardLikeController {
 

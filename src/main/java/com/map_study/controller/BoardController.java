@@ -36,13 +36,13 @@ public class BoardController {
         return "boardmain";
     }
 
-    @GetMapping("/board/write")
+    @GetMapping("/free-board/write")
     public String boardWriteForm() {
 
         return "boardwrite";
     }
 
-    @PostMapping("/board/writepro")
+    @PostMapping("/free-board/writepro")
     public String boardWritePro(@ModelAttribute Board board,
                                 @RequestParam(name = "file", required = false) MultipartFile file,
                                 Model model) throws Exception {
@@ -50,14 +50,14 @@ public class BoardController {
         boardService.boardWrite(board, file);
 
         model.addAttribute("message", "글 작성이 완료되었습니다.");
-        model.addAttribute("searchUrl", "/board/list?category=" + board.getCategory());
+        model.addAttribute("searchUrl", "/free-board/list?category=" + board.getCategory());
 
         return "message";
     }
 
 
     // 카테고리별 게시글 조회
-    @GetMapping("/board/list")
+    @GetMapping("/free-board/list")
     public String boardList(Model model,
                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                             @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
@@ -95,7 +95,7 @@ public class BoardController {
 
 
 
-    @GetMapping("/board/view")
+    @GetMapping("/free-board/view")
     public String boardView(Model model, @RequestParam("boardId") Integer boardId) {
 
         model.addAttribute("board", boardService.boardView(boardId));
@@ -107,14 +107,14 @@ public class BoardController {
         return "boardview";
     }
 
-    @GetMapping("/board/delete")
+    @GetMapping("/free-board/delete")
     public String boardDelete(Model model, @RequestParam("boardId") Integer boardId) {
 
         boardService.boardDelete(boardId);
-        return "redirect:/board/list";
+        return "redirect:/free-board/list";
     }
 
-    @GetMapping("/board/modify/{boardId}")
+    @GetMapping("/free-board/modify/{boardId}")
     public String boardModify(Model model, @PathVariable("boardId") Integer boardId) {
 
         model.addAttribute("board", boardService.boardView(boardId));
@@ -122,7 +122,7 @@ public class BoardController {
         return "boardmodify";
     }
 
-    @PostMapping("/board/update/{boardId}")
+    @PostMapping("/free-board/update/{boardId}")
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
                               Board board,
                               Model model,
@@ -143,8 +143,9 @@ public class BoardController {
         boardService.boardWrite(boardTemp, file);
 
         model.addAttribute("message", "글 수정이 완료되었습니다.");
-        model.addAttribute("searchUrl", "/board/list");
+        model.addAttribute("searchUrl", "/free-board/list?category=" + boardTemp.getCategory()); // 수정된 부분
 
         return "message";
     }
+
 }
