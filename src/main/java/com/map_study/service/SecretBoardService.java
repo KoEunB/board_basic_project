@@ -80,9 +80,4 @@ public class SecretBoardService {
         secretBoardRepository.deleteById(boardId);
     }
 
-    // 게시글 수정
-    public void updatesecretBoard(SecretBoard secretBoard) {
-
-        secretBoardRepository.save(secretBoard); // 기존 데이터 수정
-    }
 }

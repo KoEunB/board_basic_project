@@ -131,6 +131,7 @@ public class SecretBoardController {
         return "redirect:/secret-board/list";
     }
 
+    @Operation(summary = "게시글 수정 페이지 이동", description = "게시글 ID를 기반으로 수정 페이지로 이동합니다.")
     @GetMapping("/modify/{boardId}")
     public String secretboardModify(Model model, @PathVariable("boardId") Integer boardId) {
 
@@ -139,6 +140,7 @@ public class SecretBoardController {
         return "secretboardmodify";
     }
 
+    @Operation(summary = "게시글 수정", description = "게시글을 수정하고 저장합니다.")
     @PostMapping("/update/{boardId}")
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
                               SecretBoard secretBoard,
