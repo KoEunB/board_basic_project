@@ -13,7 +13,7 @@ public class BoardLikeController {
     private final BoardLikeService boardLikeService;
 
     // 좋아요 추가
-    @PostMapping("/{memberId}/{boardId}")
+    @PostMapping("/{boardId}/{memberId}")
     public ResponseEntity<String> addLike(
             @PathVariable("memberId") Integer memberId,
             @PathVariable("boardId") Integer boardId) {
@@ -23,7 +23,7 @@ public class BoardLikeController {
     }
 
     //좋아요 삭제
-    @DeleteMapping("/{memberId}/{boardId}")
+    @DeleteMapping("/{boardId}/{memberId}")
     public ResponseEntity<String> removeLike(
             @PathVariable("memberId") Integer memberId,
             @PathVariable("boardId") Integer boardId) {
@@ -33,7 +33,7 @@ public class BoardLikeController {
     }
 
     //좋아요 여부 확인
-    @GetMapping("/{memberId}/{boardId}")
+    @GetMapping("/{boardId}/{memberId}")
     public ResponseEntity<Boolean> checkLike(
             @PathVariable("memberId") Integer memberId,
             @PathVariable("boardId") Integer boardId) {
