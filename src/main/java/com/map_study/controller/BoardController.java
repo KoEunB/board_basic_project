@@ -5,6 +5,8 @@ import com.map_study.entity.BoardCategory;
 import com.map_study.entity.Comment;
 import com.map_study.service.BoardService;
 import com.map_study.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
+@Tag(name = "자유게시판 API", description = "게시글 작성, 조회, 수정, 삭제 기능 제공")
 public class BoardController {
 
     private final BoardService boardService;
@@ -30,18 +33,21 @@ public class BoardController {
         this.commentService = commentService;
     }
 
+    @Operation(summary = "게시판 메인 페이지")
     @GetMapping("/")
     public String boardMain() {
 
         return "boardmain";
     }
 
+    @Operation(summary = "게시글 작성 페이지 이동")
     @GetMapping("/free-board/write")
     public String boardWriteForm() {
 
         return "boardwrite";
     }
 
+    @Operation(summary = "게시글 작성", description = "새로운 게시글을 작성합니다.")
     @PostMapping("/free-board/writepro")
     public String boardWritePro(@ModelAttribute Board board,
                                 @RequestParam(name = "file", required = false) MultipartFile file,
@@ -55,7 +61,7 @@ public class BoardController {
         return "message";
     }
 
-
+    @Operation(summary = "게시글 목록 조회", description = "카테고리와 검색 키워드에 따라 게시글 목록을 조회합니다.")
     // 카테고리별 게시글 조회
     @GetMapping("/free-board/list")
     public String boardList(Model model,
@@ -94,7 +100,7 @@ public class BoardController {
     }
 
 
-
+    @Operation(summary = "게시글 상세 조회", description = "게시글 ID를 통해 상세 정보를 조회합니다.")
     @GetMapping("/free-board/view")
     public String boardView(Model model, @RequestParam("boardId") Integer boardId) {
 
@@ -107,6 +113,7 @@ public class BoardController {
         return "boardview";
     }
 
+    @Operation(summary = "게시글 삭제", description = "게시글 ID를 입력받아 게시글을 삭제합니다.")
     @GetMapping("/free-board/delete")
     public String boardDelete(Model model, @RequestParam("boardId") Integer boardId) {
 
@@ -114,6 +121,7 @@ public class BoardController {
         return "redirect:/free-board/list";
     }
 
+    @Operation(summary = "게시글 수정 페이지 이동", description = "게시글 ID를 기반으로 수정 페이지로 이동합니다.")
     @GetMapping("/free-board/modify/{boardId}")
     public String boardModify(Model model, @PathVariable("boardId") Integer boardId) {
 
@@ -122,6 +130,7 @@ public class BoardController {
         return "boardmodify";
     }
 
+    @Operation(summary = "게시글 수정", description = "게시글을 수정하고 저장합니다.")
     @PostMapping("/free-board/update/{boardId}")
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
                               Board board,

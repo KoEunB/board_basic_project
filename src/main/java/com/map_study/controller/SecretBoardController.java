@@ -2,6 +2,8 @@ package com.map_study.controller;
 import com.map_study.entity.*;
 import com.map_study.service.SecretBoardService;
 import com.map_study.service.SecretCommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/secret-board")
+@Tag(name = "비밀게시판 API", description = "게시글 작성, 조회, 수정, 삭제 기능 제공")
 public class SecretBoardController {
 
     private final SecretBoardService secretBoardService;
@@ -26,12 +29,14 @@ public class SecretBoardController {
     }
 
     //비밀번호 입력
+    @Operation(summary = "비밀번호 입력 페이지", description = "비밀게시판 접근을 위한 비밀번호 입력 페이지를 반환합니다.")
     @GetMapping("/enter")
     public String secretBoardEnter() {
         return "secretLogin"; // 비밀번호 입력 페이지
     }
 
     // 🔑 비밀번호 확인 후 세션에 저장
+    @Operation(summary = "비밀번호 확인", description = "입력된 비밀번호를 확인 후 세션에 저장합니다.")
     @PostMapping("/enter")
     public String verifySecretBoard(@RequestParam("password") String password, Model model) {
         String correctPassword = "1234"; // 관리자가 설정한 비밀번호 (DB에서 가져와도 됨)
@@ -43,12 +48,15 @@ public class SecretBoardController {
         return "secretLogin";
     }
 
+
+    @Operation(summary = "게시글 작성 페이지", description = "비밀게시판 글 작성 페이지를 반환합니다.")
     @GetMapping("/write")
     public String secretboardWriteForm() {
 
         return "secretboardwrite";
     }
 
+    @Operation(summary = "게시글 작성", description = "새로운 비밀게시판 글을 작성합니다.")
     @PostMapping("/writepro")
     public String secretboardWritePro(@ModelAttribute SecretBoard secretBoard,
                                       @RequestParam("category") SecretBoardCategory category,
@@ -65,6 +73,7 @@ public class SecretBoardController {
     }
 
     // 카테고리별 게시글 조회
+    @Operation(summary = "게시글 목록 조회", description = "카테고리 및 검색 키워드에 따라 비밀게시판의 게시글을 조회합니다.")
     @GetMapping("/list")
     public String secretboardList(Model model,
                             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
@@ -101,6 +110,7 @@ public class SecretBoardController {
         return "secretboardlist";
     }
 
+    @Operation(summary = "게시글 조회", description = "게시글 ID를 이용하여 비밀게시판 게시글을 조회합니다.")
     @GetMapping("/view")
     public String secretboardView(Model model, @RequestParam("boardId") Integer boardId) {
 
@@ -113,6 +123,7 @@ public class SecretBoardController {
         return "secretboardview";
     }
 
+    @Operation(summary = "게시글 삭제", description = "게시글 ID를 이용하여 비밀게시판 게시글을 삭제합니다.")
     @GetMapping("/delete")
     public String secretboardDelete(Model model, @RequestParam("boardId") Integer boardId) {
 
