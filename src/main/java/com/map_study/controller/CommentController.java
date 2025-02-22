@@ -2,6 +2,8 @@ package com.map_study.controller;
 
 import com.map_study.entity.Comment;
 import com.map_study.service.CommentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +20,18 @@ public class CommentController {
 
     @PostMapping("/save")
     public @ResponseBody List<Comment> save(@RequestBody Comment comment) {
-        System.out.println("댓글 = " + comment );
         commentService.save(comment);
+        return commentService.findAll(comment.getBoardId());
+    }
 
-        //해당 게시글에 작성된 댓글 리스트를 가져옴
-        List<Comment> commentsList = commentService.findAll(comment.getBoardId());
-        return commentsList;
+    @DeleteMapping("/delete/{commentId}/{memberId}")
+    public ResponseEntity<String> deleteComment(@PathVariable("commentId") Integer commentId,
+                                                @PathVariable("memberId") String memberId) {
+        boolean deleted = commentService.deleteComment(commentId, memberId);
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
+        }
     }
 }

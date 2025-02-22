@@ -2,6 +2,9 @@ package com.map_study.controller;
 
 import com.map_study.entity.SecretComment;
 import com.map_study.service.SecretCommentService;
+import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +20,20 @@ public class SecretCommentController {
     }
 
     @PostMapping("/save")
-    public @ResponseBody List<SecretComment> save(@RequestBody SecretComment secretcomment) {
-        System.out.println("댓글 = " + secretcomment );
+    public List<SecretComment> save(@RequestBody SecretComment secretcomment) {
         secretCommentService.save(secretcomment);
+        return secretCommentService.findAll(secretcomment.getBoardId());
+    }
 
-        //해당 게시글에 작성된 댓글 리스트를 가져옴
-        List<SecretComment> secretCommentList = secretCommentService.findAll(secretcomment.getBoardId());
-        return secretCommentList;
+    @DeleteMapping("/delete/{commentId}/{memberId}")
+    public ResponseEntity<String> deleteSecretComment(@PathVariable("commentId") Integer commentId,
+                                                      @PathVariable("memberId") String memberId) {
+        boolean deleted = secretCommentService.deleteSecretComment(commentId, memberId);
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
+        }
     }
 }
+

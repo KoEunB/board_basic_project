@@ -16,7 +16,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id; //댓글id
-    private String commentWriter;
+    private String memberId ; //작성자id
     private String commentContents;
     private Integer boardId; //게시글id
 
