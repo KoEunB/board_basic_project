@@ -41,6 +41,11 @@ public class SecretBoardService {
             secretBoard.setFilepath("/secretfiles/" + fileName);
         }
 
+        // 임시로 memberId 지정 (ex. "testUser")
+        if (secretBoard.getMemberId() == null || secretBoard.getMemberId().isEmpty()) {
+            secretBoard.setMemberId("testUser"); // 나중에 로그인 기능이 생기면 변경
+        }
+
         secretBoardRepository.save(secretBoard);
     }
 
@@ -76,8 +81,10 @@ public class SecretBoardService {
 
     //특정 게시글 삭제
     public void secretboardDelete(Integer boardId) {
+        SecretBoard secretBoard = secretBoardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
-        secretBoardRepository.deleteById(boardId);
+        secretBoardRepository.delete(secretBoard);
     }
 
 }

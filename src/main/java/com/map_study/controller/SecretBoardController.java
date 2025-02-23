@@ -124,31 +124,68 @@ public class SecretBoardController {
     }
 
     @Operation(summary = "게시글 삭제", description = "게시글 ID를 이용하여 비밀게시판 게시글을 삭제합니다.")
-    @GetMapping("/delete")
-    public String secretboardDelete(Model model, @RequestParam("boardId") Integer boardId) {
+    @GetMapping("/delete/{boardId}/{memberId}")
+    public String secretboardDelete(Model model,
+                                    @PathVariable("boardId") Integer boardId,
+                                    @PathVariable("memberId") String memberId) {
+
+        SecretBoard secretBoard = secretBoardService.secretboardView(boardId);
+
+        // 게시글이 존재하지 않을 경우 예외 처리
+        if (secretBoard == null) {
+            model.addAttribute("message", "존재하지 않는 게시글입니다.");
+            model.addAttribute("searchUrl", "/secret-board/list");
+            return "message";
+        }
+
+        // URL의 memberId와 실제 작성자 ID가 다르면 삭제 불가
+        if (!secretBoard.getMemberId().equals(memberId)) {
+            model.addAttribute("message", "삭제할 권한이 없습니다.");
+            model.addAttribute("searchUrl", "/secret-board/list");
+            return "message";
+        }
 
         secretBoardService.secretboardDelete(boardId);
         return "redirect:/secret-board/list";
     }
 
     @Operation(summary = "게시글 수정 페이지 이동", description = "게시글 ID를 기반으로 수정 페이지로 이동합니다.")
-    @GetMapping("/modify/{boardId}")
-    public String secretboardModify(Model model, @PathVariable("boardId") Integer boardId) {
+    @GetMapping("/modify/{boardId}/{memberId}")
+    public String secretboardModify(Model model,
+                                    @PathVariable("boardId") Integer boardId,
+                                    @PathVariable("memberId") String memberId) {
 
-        model.addAttribute("secretboard", secretBoardService.secretboardView(boardId));
+        SecretBoard secretBoard = secretBoardService.secretboardView(boardId);
 
+        // 작성자가 아닌 경우 접근 제한
+        if (!secretBoard.getMemberId().equals(memberId)) {
+            model.addAttribute("message", "수정할 권한이 없습니다.");
+            model.addAttribute("searchUrl", "/secret-board/list");
+            return "message";
+        }
+
+        model.addAttribute("secretboard", secretBoard);
         return "secretboardmodify";
     }
 
     @Operation(summary = "게시글 수정", description = "게시글을 수정하고 저장합니다.")
-    @PostMapping("/update/{boardId}")
+    @PostMapping("/update/{boardId}/{memberId}")
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
+                              @PathVariable("memberId") String memberId, // 요청한 사용자
                               SecretBoard secretBoard,
                               Model model,
                               @RequestParam(name = "file", required = false) MultipartFile file,
                               @RequestParam(name = "deleteImage", required = false) String deleteImage) throws Exception {
 
         SecretBoard boardTemp = secretBoardService.secretboardView(boardId);
+
+        // 작성자가 아닌 경우 수정 불가
+        if (!boardTemp.getMemberId().equals(memberId)) {
+            model.addAttribute("message", "수정할 권한이 없습니다.");
+            model.addAttribute("searchUrl", "/secret-board/list");
+            return "message";
+        }
+
         boardTemp.setTitle(secretBoard.getTitle());
         boardTemp.setContent(secretBoard.getContent());
 
@@ -166,4 +203,5 @@ public class SecretBoardController {
 
         return "message";
     }
+
 }
