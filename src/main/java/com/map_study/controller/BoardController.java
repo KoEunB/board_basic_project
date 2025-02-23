@@ -113,15 +113,22 @@ public class BoardController {
         return "boardview";
     }
 
-    @Operation(summary = "게시글 삭제", description = "게시글 ID를 입력받아 게시글을 삭제합니다.")
-    @GetMapping("/free-board/delete")
+    @Operation(summary = "게시글 삭제", description = "게시글 ID와 작성자 ID를 입력받아 게시글을 삭제합니다.")
+    @GetMapping("/free-board/delete/{boardId}/{memberId}")
     public String boardDelete(Model model,
-                              @RequestParam("boardId") Integer boardId,
-                              @RequestParam("memberId") String memberId) {
+                              @PathVariable("boardId") Integer boardId,
+                              @PathVariable("memberId") String memberId) {
 
         Board board = boardService.boardView(boardId);
 
-        // 작성자가 아닌 경우 삭제 불가
+        // 게시글이 존재하지 않을 경우 예외 처리
+        if (board == null) {
+            model.addAttribute("message", "존재하지 않는 게시글입니다.");
+            model.addAttribute("searchUrl", "/free-board/list");
+            return "message";
+        }
+
+        // URL의 memberId와 실제 작성자 ID가 다르면 삭제 불가
         if (!board.getMemberId().equals(memberId)) {
             model.addAttribute("message", "삭제할 권한이 없습니다.");
             model.addAttribute("searchUrl", "/free-board/list");
@@ -132,25 +139,45 @@ public class BoardController {
         return "redirect:/free-board/list";
     }
 
-
     @Operation(summary = "게시글 수정 페이지 이동", description = "게시글 ID를 기반으로 수정 페이지로 이동합니다.")
-    @GetMapping("/free-board/modify/{boardId}")
-    public String boardModify(Model model, @PathVariable("boardId") Integer boardId) {
+    @GetMapping("/free-board/modify/{boardId}/{memberId}")
+    public String boardModify(Model model,
+                              @PathVariable("boardId") Integer boardId,
+                              @PathVariable("memberId") String memberId) {
 
-        model.addAttribute("board", boardService.boardView(boardId));
+        Board board = boardService.boardView(boardId);
 
-        return "boardmodify";
+        // 작성자가 아닌 경우 접근 제한
+        if (!board.getMemberId().equals(memberId)) {
+            model.addAttribute("message", "수정할 권한이 없습니다.");
+            model.addAttribute("searchUrl", "/free-board/list");
+            return "message";
+        }
+
+        model.addAttribute("board", board);
+        return "boardmodify";  // 템플릿 이름 유지
     }
 
+
+
     @Operation(summary = "게시글 수정", description = "게시글을 수정하고 저장합니다.")
-    @PostMapping("/free-board/update/{boardId}")
+    @PostMapping("/free-board/update/{boardId}/{memberId}")
     public String boardUpdate(@PathVariable("boardId") Integer boardId,
+                              @PathVariable("memberId") String memberId, // 요청한 사용자
                               Board board,
                               Model model,
                               @RequestParam(name = "file", required = false) MultipartFile file,
                               @RequestParam(name = "deleteImage", required = false) String deleteImage) throws Exception {
 
         Board boardTemp = boardService.boardView(boardId);
+
+        // 작성자가 아닌 경우 수정 불가
+        if (!boardTemp.getMemberId().equals(memberId)) {
+            model.addAttribute("message", "수정할 권한이 없습니다.");
+            model.addAttribute("searchUrl", "/free-board/list");
+            return "message";
+        }
+
         boardTemp.setTitle(board.getTitle());
         boardTemp.setContent(board.getContent());
 
@@ -164,9 +191,8 @@ public class BoardController {
         boardService.boardWrite(boardTemp, file);
 
         model.addAttribute("message", "글 수정이 완료되었습니다.");
-        model.addAttribute("searchUrl", "/free-board/list?category=" + boardTemp.getCategory()); // 수정된 부분
+        model.addAttribute("searchUrl", "/free-board/list?category=" + boardTemp.getCategory());
 
         return "message";
     }
-
 }

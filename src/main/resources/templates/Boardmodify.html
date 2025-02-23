@@ -28,7 +28,7 @@
 </style>
 <body>
 <div class="layout">
-    <form th:action="@{/free-board/update/{boardId}(boardId=${board.id})}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/free-board/update/{boardId}/{memberId}(boardId=${board.id}, memberId=${board.memberId})}" method="post" enctype="multipart/form-data">
         <input type="text" name="title" th:value="${board.title}" placeholder="제목">
         <textarea name="content" placeholder="내용" th:text="${board.content}"></textarea>
 
@@ -50,5 +50,6 @@
 </div>
 </body>
 </html>
+
 
 

@@ -81,8 +81,10 @@ public class BoardService {
 
     //특정 게시글 삭제
     public void boardDelete(Integer boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
-        boardRepository.deleteById(boardId);
+        boardRepository.delete(board);
     }
 
 }

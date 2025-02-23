@@ -22,11 +22,11 @@
     <img th:src="${board.filepath}" alt="게시글 이미지" style="max-width: 100%; height: auto;">
 </div>
 
-<!-- 게시글 상세보기 페이지 -->
-<th:block th:if="${board.memberId == 'testUser'}"> <!-- 'testUser'는 현재 임시 로그인 사용자 -->
-    <a th:href="@{/free-board/delete(boardId=${board.id}, memberId=${board.memberId})}">삭제</a>
-    <a th:href="@{/free-board/modify/{boardId}(boardId=${board.id})}">글 수정</a>
+<th:block th:if="${board.memberId == 'testUser'}">
+    <a th:href="@{/free-board/delete/{boardId}/{memberId}(boardId=${board.id}, memberId=${board.memberId})}">삭제</a>
+    <a th:href="@{/free-board/modify/{boardId}/{memberId}(boardId=${board.id}, memberId=${board.memberId})}">수정</a>
 </th:block>
+
 
 <p></p>
 <div>
