@@ -18,6 +18,7 @@ public class Board {
     private String content;
     private String filename;
     private String filepath;
+    private String memberId;
 
     @CreationTimestamp
     private Timestamp boardCreatedTime; //게시글 작성 시간

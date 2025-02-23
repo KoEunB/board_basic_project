@@ -115,11 +115,23 @@ public class BoardController {
 
     @Operation(summary = "게시글 삭제", description = "게시글 ID를 입력받아 게시글을 삭제합니다.")
     @GetMapping("/free-board/delete")
-    public String boardDelete(Model model, @RequestParam("boardId") Integer boardId) {
+    public String boardDelete(Model model,
+                              @RequestParam("boardId") Integer boardId,
+                              @RequestParam("memberId") String memberId) {
+
+        Board board = boardService.boardView(boardId);
+
+        // 작성자가 아닌 경우 삭제 불가
+        if (!board.getMemberId().equals(memberId)) {
+            model.addAttribute("message", "삭제할 권한이 없습니다.");
+            model.addAttribute("searchUrl", "/free-board/list");
+            return "message";
+        }
 
         boardService.boardDelete(boardId);
         return "redirect:/free-board/list";
     }
+
 
     @Operation(summary = "게시글 수정 페이지 이동", description = "게시글 ID를 기반으로 수정 페이지로 이동합니다.")
     @GetMapping("/free-board/modify/{boardId}")

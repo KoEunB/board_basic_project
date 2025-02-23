@@ -25,25 +25,28 @@ public class BoardService {
     //글 작성 처리
     public void boardWrite(Board board, MultipartFile file) throws Exception {
         if (!file.isEmpty()) {
-            // upload 폴더에 저장 (static이 아닌 외부 접근 가능한 경로로)
             String uploadDir = System.getProperty("user.dir") + "/upload";
             File uploadFolder = new File(uploadDir);
             if (!uploadFolder.exists()) {
-                uploadFolder.mkdirs(); // 폴더 없으면 생성
+                uploadFolder.mkdirs();
             }
 
-            // 파일 이름에 UUID로 중복 방지
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
             File saveFile = new File(uploadDir, fileName);
             file.transferTo(saveFile);
 
-            // 파일 정보 DB 저장 (정적 리소스 접근 경로 설정)
             board.setFilename(fileName);
             board.setFilepath("/files/" + fileName);
         }
 
+        // 임시로 memberId 지정 (ex. "testUser")
+        if (board.getMemberId() == null || board.getMemberId().isEmpty()) {
+            board.setMemberId("testUser"); // 나중에 로그인 기능이 생기면 변경
+        }
+
         boardRepository.save(board);
     }
+
 
     // 카테고리별 게시글 리스트 처리
     public Page<Board> boardList(Pageable pageable, BoardCategory category) {
