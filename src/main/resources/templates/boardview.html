@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 상세 페이지</title>
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 </head>
 <body>
 <h1 th:text="${board.title}">제목입니다</h1>
@@ -17,7 +17,7 @@
 <p th:text="|작성 날짜: ${#dates.format(board.boardCreatedTime, 'yyyy-MM-dd')}|"></p>
 <p th:text="${board.content}">내용이 들어갈 부분입니다</p>
 
-<!-- 이미지 파일이면 화면에 표시 -->
+<!-- 이미지 파일 표시 -->
 <div th:if="${board.filename}">
     <img th:src="${board.filepath}" alt="게시글 이미지" style="max-width: 100%; height: auto;">
 </div>
@@ -27,13 +27,11 @@
     <a th:href="@{/free-board/modify/{boardId}/{memberId}(boardId=${board.id}, memberId=${board.memberId})}">수정</a>
 </th:block>
 
-
-<p></p>
 <div>
     <input type="text" id="commentContents" placeholder="내용">
     <button id="comment-write-btn" onclick="commentWrite()">댓글작성</button>
 </div>
-<p></p>
+
 <div id="comment-list">
     <table>
         <thead>
@@ -42,6 +40,7 @@
             <th>작성자</th>
             <th>내용</th>
             <th>작성시간</th>
+            <th>삭제</th>
         </tr>
         </thead>
         <tbody>
@@ -57,10 +56,10 @@
         </tbody>
     </table>
 </div>
-</body>
+
 <script th:inline="javascript">
-    const commentWrite = () => {
-        const memberId = 1;  // 임시 회원 ID (로그인 시스템 구현 전까지 사용)
+    function commentWrite() {
+        const memberId = "testUser";  // 로그인 연동 전 임시 사용자
         const contents = document.getElementById('commentContents').value;
         const boardId = '[[${board.id}]]';
 
@@ -69,41 +68,36 @@
             url: "/free-comment/save",
             contentType: "application/json",
             data: JSON.stringify({
-                memberId: memberId, // 작성자를 임의의 회원번호로 설정
+                memberId: memberId,
                 commentContents: contents,
                 boardId: boardId
             }),
             dataType: "json",
             success: function (commentList) {
-                console.log("작성 성공");
-                console.log(commentList);
+                console.log("작성 성공", commentList);
                 let output = "<table>";
-                output += "<tr><th>댓글번호</th>";
-                output += "<th>작성자</th>";
-                output += "<th>내용</th>";
-                output += "<th>작성시간</th></tr>";
-                for(let i in commentList){
+                output += "<tr><th>댓글번호</th><th>작성자</th><th>내용</th><th>작성시간</th><th>삭제</th></tr>";
+                for (let i in commentList) {
                     output += "<tr>";
-                    output += "<td>"+commentList[i].id+"</td>";
-                    output += "<td>"+commentList[i].memberId+"</td>";
-                    output += "<td>"+commentList[i].commentContents+"</td>";
-                    output += "<td>"+commentList[i].commentCreatedTime+"</td>";
+                    output += `<td>${commentList[i].id}</td>`;
+                    output += `<td>${commentList[i].memberId}</td>`;
+                    output += `<td>${commentList[i].commentContents}</td>`;
+                    output += `<td>${commentList[i].commentCreatedTime}</td>`;
+                    output += `<td><button onclick="deleteComment(${commentList[i].id}, '${commentList[i].memberId}')">삭제</button></td>`;
                     output += "</tr>";
                 }
                 output += "</table>";
                 document.getElementById('comment-list').innerHTML = output;
-                document.getElementById('commentContents').value='';
+                document.getElementById('commentContents').value = '';
             },
             error: function () {
-                console.log("작성 실패");
+                console.log("댓글 작성 실패");
             }
         });
-    };
-</script>
+    }
 
-<script th:inline="javascript">
     function deleteComment(commentId, memberId) {
-        const currentUser = "1"; // 임시 사용자 ID
+        const currentUser = "testUser"; // 임시 사용자 ID
         if (memberId !== currentUser) {
             alert("본인이 작성한 댓글만 삭제할 수 있습니다.");
             return;
@@ -121,31 +115,29 @@
             }
         });
     }
-</script>
 
-<script th:inline="javascript">
     $(document).ready(function () {
-        const memberId = 1;  // 임시 회원 ID (실제 로그인 정보 연동 필요)
+        const memberId = "testUser";  // 로그인 연동 전 임시 사용자
         const boardId = '[[${board.id}]]';
 
-        // 좋아요 여부 확인 후 하트 색 변경
-        $.get(`/free-board/like/${memberId}/${boardId}`, function (isLiked) {
+        // 좋아요 여부 확인
+        $.get(`/free-board/like/${boardId}/${memberId}`, function (isLiked) {
             if (isLiked) {
                 $("#heart-button").text("❤️");
             }
         });
 
-        // 하트 클릭 이벤트
+        // 좋아요 추가 및 삭제
         $("#heart-button").click(function () {
-            let heartCount = parseInt($("#heart-count").text()) || 0; // 숫자로 변환, NaN 방지
+            let heartCount = parseInt($("#heart-count").text()) || 0; // NaN 방지
 
             if ($("#heart-button").text() === "🤍") {
                 $.ajax({
                     type: "POST",
-                    url: `/free-board/like/${memberId}/${boardId}`,
+                    url: `/free-board/like/${boardId}/${memberId}`,
                     success: function () {
                         $("#heart-button").text("❤️");
-                        $("#heart-count").text(heartCount + 1); // 숫자 증가
+                        $("#heart-count").text(heartCount + 1);
                     },
                     error: function () {
                         console.log("좋아요 추가 실패");
@@ -154,10 +146,10 @@
             } else {
                 $.ajax({
                     type: "DELETE",
-                    url: `/free-board/like/${memberId}/${boardId}`,
+                    url: `/free-board/like/${boardId}/${memberId}`,
                     success: function () {
                         $("#heart-button").text("🤍");
-                        $("#heart-count").text(Math.max(0, heartCount - 1)); // 숫자 감소, 최소 0
+                        $("#heart-count").text(Math.max(0, heartCount - 1));
                     },
                     error: function () {
                         console.log("좋아요 삭제 실패");
@@ -167,6 +159,5 @@
         });
     });
 </script>
-
-
+</body>
 </html>

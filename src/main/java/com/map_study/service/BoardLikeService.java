@@ -19,25 +19,24 @@ public class BoardLikeService {
 
     //좋아요 추가
     @Transactional
-    public void addLike(Integer memberId, Integer boardId) {
+    public void addLike(String memberId, Integer boardId) {
         if (!boardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
+            Board board = boardRepository.findById(boardId)
+                    .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
             BoardLike like = new BoardLike();
             like.setMemberId(memberId);
             like.setBoardId(boardId);
             boardLikeRepository.save(like);
 
-            // 게시글의 likeCount 증가
-            Optional<Board> board = boardRepository.findById(boardId);
-            board.ifPresent(b -> {
-                b.setHeartCount(b.getHeartCount() + 1);
-                boardRepository.save(b);
-            });
+            board.setHeartCount(board.getHeartCount() + 1);
+            boardRepository.save(board);
         }
     }
 
     //좋아요 삭제
     @Transactional
-    public void removeLike(Integer memberId, Integer boardId) {
+    public void removeLike(String memberId, Integer boardId) {
         boardLikeRepository.findByMemberIdAndBoardId(memberId, boardId).ifPresent(like -> {
             boardLikeRepository.delete(like);
 
@@ -51,10 +50,7 @@ public class BoardLikeService {
     }
 
     //좋아요 여부 확인
-    public boolean isLiked(Integer memberId, Integer boardId) {
+    public boolean isLiked(String memberId, Integer boardId) {
         return boardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId);
     }
 }
-
-
-
