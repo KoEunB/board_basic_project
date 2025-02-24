@@ -34,6 +34,7 @@
         <tr>
             <th>글 번호</th>
             <th>제목</th>
+            <th>이미지</th>
             <th>작성자</th>
             <th>조회수</th>
             <th>하트</th>
@@ -44,6 +45,11 @@
             <td th:text="${board.id}"></td>
             <td>
                 <a th:text="${board.title}" th:href="@{/free-board/view(boardId=${board.id})}"></a>
+            </td>
+            <td>
+                <img th:src="${board.filename} ? ${board.filepath} : '/images/default.png'"
+                     alt="게시글 이미지"
+                     style="max-width: 100px; height: auto;">
             </td>
             <td th:text="${board.memberId}"></td>
             <td th:text="${board.viewCount}"></td>
