@@ -19,7 +19,7 @@ public class SecretBoardLikeController {
     @Operation(summary = "좋아요 추가", description = "회원 ID와 게시글 ID를 받아 좋아요를 추가합니다.")
     @PostMapping("/{boardId}/{memberId}")
     public ResponseEntity<String> addLike(
-            @PathVariable("memberId") Integer memberId,
+            @PathVariable("memberId") String memberId,
             @PathVariable("boardId") Integer boardId) {
 
         secretBoardLikeService.addLike(memberId, boardId);
@@ -30,7 +30,7 @@ public class SecretBoardLikeController {
     @Operation(summary = "좋아요 삭제", description = "회원 ID와 게시글 ID를 받아 좋아요를 삭제합니다.")
     @DeleteMapping("/{boardId}/{memberId}")
     public ResponseEntity<String> removeLike(
-            @PathVariable("memberId") Integer memberId,
+            @PathVariable("memberId") String memberId,
             @PathVariable("boardId") Integer boardId) {
 
         secretBoardLikeService.removeLike(memberId, boardId);
@@ -41,7 +41,7 @@ public class SecretBoardLikeController {
     @Operation(summary = "좋아요 여부 확인", description = "회원 ID와 게시글 ID를 받아 좋아요 여부를 확인합니다.")
     @GetMapping("/{boardId}/{memberId}")
     public ResponseEntity<Boolean> checkLike(
-            @PathVariable("memberId") Integer memberId,
+            @PathVariable("memberId") String memberId,
             @PathVariable("boardId") Integer boardId) {
 
         return ResponseEntity.ok(secretBoardLikeService.isLiked(memberId, boardId));
