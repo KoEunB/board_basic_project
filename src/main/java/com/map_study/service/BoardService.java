@@ -76,6 +76,9 @@ public class BoardService {
         //조회수
         board.setViewCount(board.getViewCount() + 1);
 
+        //변경된 조회수 DB에 저장
+        boardRepository.save(board);
+
         return board;
     }
 

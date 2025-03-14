@@ -11,17 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-
-import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
-@Controller
+@RestController
 @Tag(name = "자유게시판 API", description = "게시글 작성, 조회, 수정, 삭제 기능 제공")
 public class BoardController {
 
@@ -64,39 +60,24 @@ public class BoardController {
     @Operation(summary = "게시글 목록 조회", description = "카테고리와 검색 키워드에 따라 게시글 목록을 조회합니다.")
     // 카테고리별 게시글 조회
     @GetMapping("/free-board/list")
-    public String boardList(Model model,
-                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                            @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
-                            @RequestParam(name = "category", required = false) BoardCategory category) {
+    public ResponseEntity<Page<Board>> boardList(
+            @PageableDefault(page = 0, size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
+            @RequestParam(name = "category", required = false) BoardCategory category) {
 
         Page<Board> list;
 
         if (!searchKeyword.isEmpty() && category != null) {
-            // 카테고리와 키워드가 모두 있는 경우
             list = boardService.boardSearchListByCategory(searchKeyword, category, pageable);
         } else if (!searchKeyword.isEmpty()) {
-            // 검색 키워드만 있는 경우
             list = boardService.boardSearchList(searchKeyword, pageable);
         } else if (category != null) {
-            // 카테고리만 있는 경우
             list = boardService.boardList(pageable, category);
         } else {
-            // 아무 필터도 없는 경우 전체 조회
             list = boardService.boardList(pageable, null);
         }
 
-        int nowPage = list.getPageable().getPageNumber() + 1;
-        int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 5, list.getTotalPages());
-
-        model.addAttribute("list", list);
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("selectedCategory", category); // 선택된 카테고리 유지
-        model.addAttribute("searchKeyword", searchKeyword); // 검색 키워드 유지
-
-        return "boardlist";
+        return ResponseEntity.ok(list);
     }
 
 
